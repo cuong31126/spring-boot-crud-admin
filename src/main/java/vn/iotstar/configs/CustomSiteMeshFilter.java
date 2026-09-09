@@ -6,10 +6,13 @@ import org.sitemesh.config.ConfigurableSiteMeshFilter;
 public class CustomSiteMeshFilter extends ConfigurableSiteMeshFilter {
     @Override
     protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
-        builder.addDecoratorPath("/*", "/WEB-INF/decorators/web.jsp")
-               .addDecoratorPath("/admin", "/WEB-INF/decorators/admin.jsp")
-               .addDecoratorPath("/admin/*", "/WEB-INF/decorators/admin.jsp")
-               .addDecoratorPath("/admin/**", "/WEB-INF/decorators/admin.jsp")
+        // Assigning default decorator if no path specific decorator found
+        builder.addDecoratorPath("/*", "web.jsp")
+               // Map decorators to specific path patterns.
+               .addDecoratorPath("/admin", "admin.jsp")
+               .addDecoratorPath("/admin/*", "admin.jsp")
+               .addDecoratorPath("/admin/**", "admin.jsp")
+               // Exclude paths from decoration.
                .addExcludedPath("/login*").addExcludedPath("/login/*")
                .addExcludedPath("/alogin*").addExcludedPath("/alogin/*")
                .addExcludedPath("/api/**").addExcludedPath("/api/*")
