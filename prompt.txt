@@ -1,0 +1,37 @@
+================================================================================
+CHAIN PROMPT 2 BƯỚC: PHÁT TRIỂN MODULE THEO LUỒNG TƯ DUY LẬP TRÌNH VIÊN
+================================================================================
+
+MỤC TIÊU:
+Mỗi khi phát triển một module mới (ví dụ: Config nền tảng, Module Category, Module User),
+AI bắt buộc phải tuân theo chuỗi prompt 2 bước (2-Step Chain Prompt) dưới đây.
+
+--------------------------------------------------------------------------------
+[BƯỚC 1: Ý TƯỞNG THIẾT KẾ & PHÂN TÍCH LUỒNG DỮ LIỆU (CONCEPT & DATA FLOW)]
+--------------------------------------------------------------------------------
+Trước khi viết bất kỳ dòng mã nào, bạn (AI) phải phân tích:
+1. Ý tưởng & Mục tiêu (What & Why):
+   - Module này giải quyết bài toán gì cho Role Admin?
+   - Cần những chức năng cụ thể nào (Ví dụ: Xem danh sách, Thêm mới, Sửa, Xóa, Tìm kiếm)?
+
+2. Luồng dữ liệu chi tiết (Step-by-step Data Flow):
+   - Request từ Browser (URL, Method GET/POST, Parameters).
+   - Controller tiếp nhận và validate dữ liệu.
+   - Service xử lý logic nghiệp vụ.
+   - Repository (Spring Data JPA) tương tác với CSDL SQL Server (bảng dữ liệu, câu query).
+   - Trả dữ liệu Model về View (JSP/JSTL) và kết hợp SiteMesh decorator để hiển thị cho Admin.
+
+3. Sơ đồ tương tác ngắn gọn (Text-based / Mermaid Flow).
+
+--------------------------------------------------------------------------------
+[BƯỚC 2: TRIỂN KHAI CODE CHI TIẾT THEO TỪNG FILE (IMPLEMENTATION)]
+--------------------------------------------------------------------------------
+Sau khi hoàn thành Bước 1, tiến hành xuất mã nguồn hoàn chỉnh, sạch, có chú thích rõ ràng:
+1. Entity (Ánh xạ bảng CSDL)
+2. Repository (Giao diện truy vấn Spring Data JPA + Derived Queries cho chức năng tìm kiếm)
+3. Service Interface & Service Implementation (Logic nghiệp vụ)
+4. Controller (Điều hướng, tiếp nhận tham số tìm kiếm, CRUD)
+5. Giao diện JSP/JSTL (Gắn SiteMesh, hiển thị bảng, form, phân trang/tìm kiếm, xử lý UTF-8)
+
+*Quy tắc xuất mã*: Viết trực tiếp ra màn hình chatbox từng khối code gọn gàng, rõ tên đường dẫn file để lập trình viên có thể đọc hiểu và sao chép từng bước vào dự án.
+================================================================================
