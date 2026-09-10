@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/admin-layout}">
+
+<head>
+    <title>Danh sách danh mục (Phân trang)</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <!-- Tiêu đề trang & Nút thêm mới -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold text-primary mb-1">
+                    <i class="fa-solid fa-folder-tree me-2"></i>QUẢN LÝ DANH MỤC
+                </h4>
+                <p class="text-muted small mb-0">Hiển thị danh sách danh mục có tìm kiếm và phân trang</p>
+            </div>
+            <a th:href="@{/admin/categories/add}" class="btn btn-success shadow-sm">
+                <i class="fa-solid fa-circle-plus me-1"></i> Thêm mới danh mục
+            </a>
+        </div>
+
+        <!-- Thông báo thành công / thất bại -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i><span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i><span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Khung tìm kiếm & Bộ lọc số lượng hiển thị -->
+        <div class="card card-custom mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/categories/searchpaginated}" method="get" class="row g-2 align-items-center">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white"><i
+                                    class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                            <input type="text" name="name" class="form-control"
+                                placeholder="Nhập tên danh mục cần tìm kiếm..." th:value="${name}">
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <select name="size" class="form-select" onchange="this.form.submit()">
+                            <option value="5" th:selected="${categoryPage.size == 5}">5 dòng / trang</option>
+                            <option value="10" th:selected="${categoryPage.size == 10}">10 dòng / trang</option>
+                            <option value="20" th:selected="${categoryPage.size == 20}">20 dòng / trang</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5 col-6 text-end">
+                        <button type="submit" class="btn btn-primary px-3">
+                            <i class="fa-solid fa-filter me-1"></i> Tìm kiếm
+                        </button>
+                        <a th:href="@{/admin/categories/searchpaginated}" class="btn btn-outline-secondary ms-1">
+                            <i class="fa-solid fa-rotate-left me-1"></i> Đặt lại
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bảng hiển thị danh sách Category -->
+        <div class="card card-custom">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center" style="width: 70px;">STT</th>
+                                <th class="text-center" style="width: 90px;">Mã ID</th>
+                                <th>Tên danh mục</th>
+                                <th class="text-center" style="width: 140px;">Hình ảnh</th>
+                                <th class="text-center" style="width: 140px;">Trạng thái</th>
+                                <th class="text-center" style="width: 160px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dòng rỗng khi không có bản ghi nào -->
+                            <tr th:if="${categoryPage.totalElements == 0}">
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="fa-regular fa-folder-open fa-2x mb-2 d-block text-secondary"></i>
+                                    Không tìm thấy dữ liệu danh mục nào!
+                                </td>
+                            </tr>
+
+                            <!-- Lặp danh sách từng Category -->
+                            <tr th:each="category, stat : ${categoryPage.content}"
+                                th:classappend="${stat.odd} ? 'table-light' : '' ">
+                                <td class="text-center fw-semibold text-secondary"
+                                    th:text="${(categoryPage.number * categoryPage.size) + stat.count}">1</td>
+                                <td class="text-center fw-bold text-primary" th:text="${category.categoryId}"
+                                    th:title="|Mã danh mục là : ${category.categoryId} - Tên :  ${category.categoryname}|">
+                                    1</td>
+                                <td>
+                                    <span class="fw-semibold" th:text="${category.categoryname}">Điện thoại</span>
+                                    <span th:if="${category.categoryId >= 10 } " class="badge bg-danger-ms-1"
+                                        style="font-size:0.65rem;">mới dmm </span>
+                                </td>
+                                <td class="text-center">
+                                    <img th:if="${category.images != null and !category.images.empty}"
+                                        th:src="${category.images}" alt="Ảnh Category"
+                                        style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #dee2e6;"
+                                        onerror="this.src='https://placehold.co/48x48?text=No+Img'">
+                                    <span th:unless="${category.images != null and !category.images.empty}"
+                                        class="badge bg-light text-secondary border">
+                                        Không có ảnh
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span th:if="${category.status == 1}"
+                                        class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                                        <i class="fa-solid fa-circle-check me-1"></i>Hoạt động
+                                    </span>
+                                    <span th:unless="${category.status == 1}"
+                                        class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1">
+                                        <i class="fa-solid fa-circle-xmark me-1"></i>Tạm khóa
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <a th:href="@{'/admin/categories/edit/' + ${category.categoryId}}"
+                                        class="btn btn-sm btn-outline-primary me-1" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-to-square"></i> Sửa
+                                    </a>
+                                    <a th:href="@{'/admin/categories/delete/' + ${category.categoryId}}"
+                                        class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');"
+                                        title="Xóa">
+                                        <i class="fa-solid fa-trash-can"></i> Xóa
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Phân trang (Pagination Controls) -->
+            <div class="card-footer bg-white py-3" th:if="${categoryPage.totalPages > 0}">
+                <div class="row align-items-center">
+                    <div class="col-md-5 small text-muted text-center text-md-start mb-2 mb-md-0">
+                        Hiển thị <strong>[[${categoryPage.numberOfElements}]]</strong> trên tổng số
+                        <strong>[[${categoryPage.totalElements}]]</strong> danh mục
+                        (Trang <strong>[[${categoryPage.number + 1}]]</strong> /
+                        <strong>[[${categoryPage.totalPages}]]</strong>)
+                    </div>
+                    <div class="col-md-7">
+                        <nav aria-label="Page navigation" th:if="${categoryPage.totalPages > 1}">
+                            <ul class="pagination pagination-sm justify-content-center justify-content-md-end mb-0">
+                                <!-- Nút Về đầu trang (First) -->
+                                <li class="page-item" th:classappend="${categoryPage.first} ? 'disabled'">
+                                    <a class="page-link"
+                                        th:href="@{/admin/categories/searchpaginated(name=${name}, size=${categoryPage.size}, page=1)}">
+                                        <i class="fa-solid fa-angles-left"></i>
+                                    </a>
+                                </li>
+                                <!-- Nút Trang trước (Prev) -->
+                                <li class="page-item" th:classappend="${categoryPage.first} ? 'disabled'">
+                                    <a class="page-link"
+                                        th:href="@{/admin/categories/searchpaginated(name=${name}, size=${categoryPage.size}, page=${categoryPage.number})}">
+                                        <i class="fa-solid fa-angle-left"></i>
+                                    </a>
+                                </li>
+
+                                <!-- Danh sách các số trang [1, 2, 3...] -->
+                                <li th:each="pageNumber : ${pageNumbers}" class="page-item"
+                                    th:classappend="${pageNumber == categoryPage.number + 1} ? 'active'">
+                                    <a class="page-link"
+                                        th:href="@{/admin/categories/searchpaginated(name=${name}, size=${categoryPage.size}, page=${pageNumber})}"
+                                        th:text="${pageNumber}">1</a>
+                                </li>
+
+                                <!-- Nút Trang tiếp (Next) -->
+                                <li class="page-item" th:classappend="${categoryPage.last} ? 'disabled'">
+                                    <a class="page-link"
+                                        th:href="@{/admin/categories/searchpaginated(name=${name}, size=${categoryPage.size}, page=${categoryPage.number + 2})}">
+                                        <i class="fa-solid fa-angle-right"></i>
+                                    </a>
+                                </li>
+                                <!-- Nút Trang cuối (Last) -->
+                                <li class="page-item" th:classappend="${categoryPage.last} ? 'disabled'">
+                                    <a class="page-link"
+                                        th:href="@{/admin/categories/searchpaginated(name=${name}, size=${categoryPage.size}, page=${categoryPage.totalPages})}">
+                                        <i class="fa-solid fa-angles-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

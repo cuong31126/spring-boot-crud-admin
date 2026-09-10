@@ -8,14 +8,17 @@ public class CustomSiteMeshFilter extends ConfigurableSiteMeshFilter {
     protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
         // Assigning default decorator if no path specific decorator found
         builder.addDecoratorPath("/*", "web.jsp")
-               // Map decorators to specific path patterns.
-               .addDecoratorPath("/admin", "admin.jsp")
-               .addDecoratorPath("/admin/*", "admin.jsp")
-               .addDecoratorPath("/admin/**", "admin.jsp")
-               // Exclude paths from decoration.
-               .addExcludedPath("/login*").addExcludedPath("/login/*")
-               .addExcludedPath("/alogin*").addExcludedPath("/alogin/*")
-               .addExcludedPath("/api/**").addExcludedPath("/api/*")
-               .addExcludedPath("/static/**");
+                // Map decorators to specific path patterns.
+                .addDecoratorPath("/admin", "admin.jsp")
+                .addDecoratorPath("/admin/*", "admin.jsp")
+                .addDecoratorPath("/admin/**", "admin.jsp")
+                .addExcludedPath("/admin/categories")
+                .addExcludedPath("/admin/categories/*")
+                .addExcludedPath("/admin/categories/**")
+                // Exclude paths from decoration.
+                .addExcludedPath("/login*").addExcludedPath("/login/*")
+                .addExcludedPath("/alogin*").addExcludedPath("/alogin/*")
+                .addExcludedPath("/api/**").addExcludedPath("/api/*")
+                .addExcludedPath("/static/**");
     }
 }

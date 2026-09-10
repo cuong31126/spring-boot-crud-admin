@@ -1,15 +1,23 @@
 package vn.iotstar.controller.admin;
 
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import org.springframework.util.StringUtils;
 import vn.iotstar.entity.Category;
 import vn.iotstar.service.ICategoryService;
+import java.util.stream.IntStream;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin/categories")
@@ -18,19 +26,46 @@ public class CategoryController {
     @Autowired
     private ICategoryService categoryService;
 
-    // 1. Hiển thị danh sách và Tìm kiếm Category
-    @GetMapping({"", "/"})
-    public String list(ModelMap model,
-                       @RequestParam(name = "keyword", required = false) String keyword) {
-        List<Category> list;
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            list = categoryService.searchByCategoryname(keyword.trim());
-            model.addAttribute("keyword", keyword.trim());
+    @GetMapping({ "", "/" })
+    public String index() {
+        return "redirect:/admin/categories/searchpaginated";
+    }
+
+    // 2. Chức năng Danh sách + Tìm kiếm + Phân trang (Search & Paginated)
+    @GetMapping("/searchpaginated")
+    public String search(ModelMap model,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size) {
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(5); // Mặc định 5 dòng / trang
+        // Sắp xếp tăng dần theo categoryname
+        Pageable pageable = PageRequest.of(currentPage - 1, pageSize, Sort.by("categoryId").ascending());
+        Page<Category> resultPage;
+        if (StringUtils.hasText(name)) {
+            resultPage = categoryService.searchByCategoryname(name.trim(), pageable);
+            model.addAttribute("name", name.trim());
         } else {
-            list = categoryService.findAll();
+            resultPage = categoryService.findAll(pageable);
         }
-        model.addAttribute("categories", list);
-        return "admin/category/list";
+        // Tính toán danh sách số trang [1, 2, 3...] để hiển thị thanh điều hướng
+        int totalPages = resultPage.getTotalPages();
+        if (totalPages > 0) {
+            int start = Math.max(1, currentPage - 2);
+            int end = Math.min(currentPage + 2, totalPages);
+            if (totalPages > 5) {
+                if (end <= 4)
+                    end = 5;
+                else if (currentPage >= totalPages - 2)
+                    start = totalPages - 4;
+            }
+            List<Integer> pageNumbers = IntStream.rangeClosed(start, end)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+        model.addAttribute("categoryPage", resultPage);
+        return "admin/categories/searchpaginated";
     }
 
     // 2. Mở form Thêm mới Category
@@ -40,7 +75,7 @@ public class CategoryController {
         category.setStatus(1); // Mặc định hoạt động
         model.addAttribute("category", category);
         model.addAttribute("isEdit", false);
-        return "admin/category/form";
+        return "admin/categories/addOrEdit";
     }
 
     // 3. Mở form Chỉnh sửa Category
@@ -50,16 +85,16 @@ public class CategoryController {
         if (opt.isPresent()) {
             model.addAttribute("category", opt.get());
             model.addAttribute("isEdit", true);
-            return "admin/category/form";
+            return "admin/categories/addOrEdit";
         }
         redirect.addFlashAttribute("errorMessage", "Không tìm thấy danh mục có ID: " + id);
-        return "redirect:/admin/categories";
+        return "redirect:/admin/categories/searchpaginated";
     }
 
     // 4. Lưu dữ liệu Thêm mới / Cập nhật
-    @PostMapping("/save")
+    @PostMapping("/saveOrUpdate")
     public String saveOrUpdate(@ModelAttribute("category") Category category,
-                               RedirectAttributes redirect) {
+            RedirectAttributes redirect) {
         boolean isNew = (category.getCategoryId() == null);
         categoryService.save(category);
         if (isNew) {
@@ -67,7 +102,7 @@ public class CategoryController {
         } else {
             redirect.addFlashAttribute("successMessage", "Cập nhật danh mục thành công!");
         }
-        return "redirect:/admin/categories";
+        return "redirect:/admin/categories/searchpaginated";
     }
 
     // 5. Xóa Category
@@ -79,6 +114,6 @@ public class CategoryController {
         } catch (Exception e) {
             redirect.addFlashAttribute("errorMessage", "Không thể xóa danh mục này (có thể do ràng buộc dữ liệu)!");
         }
-        return "redirect:/admin/categories";
+        return "redirect:/admin/categories/searchpaginated";
     }
 }

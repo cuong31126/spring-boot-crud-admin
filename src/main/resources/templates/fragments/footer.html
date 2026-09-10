@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <footer th:fragment="footer" class="bg-dark text-white py-3 mt-auto border-top border-secondary">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                    <div class="fw-bold text-warning mb-1">
+                        <i class="fa-solid fa-graduation-cap me-1"></i> BÀI TẬP SPRING BOOT 3 - THYMELEAF & DIALECT
+                        LAYOUT
+                    </div>
+                    <div class="small text-secondary">
+                        Khoa Công nghệ Thông tin - Trường ĐH Sư phạm Kỹ thuật TP.HCM (HCMUTE)
+                    </div>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="small">
+                        <strong>Sinh viên thực hiện:</strong> <span class="text-info fw-bold">Lê Quốc Cường</span>
+                        &nbsp;|&nbsp;
+                        <strong>MSSV:</strong> <span class="text-info fw-bold">22110174</span>
+                    </div>
+                    <div class="small text-secondary mt-1">
+                        Chức năng CRUD & Tìm kiếm phân trang Category &bull; &copy; 2024
+                        <span th:text="${#dates.year(#dates.createNow())}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

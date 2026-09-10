@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/admin-layout}">
+
+<head>
+    <title th:text="${isEdit ? 'Cập nhật danh mục' : 'Thêm mới danh mục'}">Form Danh mục</title>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Nút quay lại -->
+                <div class="mb-3">
+                    <a th:href="@{/admin/categories/searchpaginated}" class="text-decoration-none text-secondary small">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Quay lại danh sách
+                    </a>
+                </div>
+
+                <!-- Card Form -->
+                <div class="card card-custom">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="card-title mb-0 fw-bold">
+                            <i
+                                th:class="${isEdit ? 'fa-solid fa-pen-to-square me-2' : 'fa-solid fa-circle-plus me-2'}"></i>
+                            <span th:text="${isEdit ? 'CẬP NHẬT DANH MỤC' : 'THÊM MỚI DANH MỤC'}"></span>
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/admin/categories/saveOrUpdate}" th:object="${category}" method="post">
+
+                            <!-- Input ID ẩn (cho trường hợp cập nhật) -->
+                            <input type="hidden" th:field="*{categoryId}" />
+
+
+
+                            <!-- Tên danh mục -->
+                            <div class="mb-3">
+                                <label for="categoryname" class="form-label fw-semibold">
+                                    Tên danh mục <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="categoryname" th:field="*{categoryname}"
+                                    placeholder="Ví dụ: Laptop, Đồng hồ, Thời trang..." required>
+                            </div>
+
+                            <!-- Đường dẫn hình ảnh -->
+                            <div class="mb-3">
+                                <label for="images" class="form-label fw-semibold">Đường dẫn hình ảnh (URL)</label>
+                                <input type="text" class="form-control" id="images" th:field="*{images}"
+                                    placeholder="Ví dụ: https://example.com/image.jpg">
+                                <div class="form-text">Dán link ảnh online hoặc đường dẫn ảnh tĩnh.</div>
+                            </div>
+
+                            <!-- Trạng thái -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold d-block">Trạng thái kích hoạt</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="statusActive" th:field="*{status}"
+                                        value="1">
+                                    <label class="form-check-label text-success fw-medium" for="statusActive">
+                                        <i class="fa-solid fa-circle-check me-1"></i>Hoạt động
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" id="statusInactive"
+                                        th:field="*{status}" value="0">
+                                    <label class="form-check-label text-secondary fw-medium" for="statusInactive">
+                                        <i class="fa-solid fa-circle-xmark me-1"></i>Tạm khóa
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Nút Thao Tác -->
+                            <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                                <a th:href="@{/admin/categories/searchpaginated}" class="btn btn-outline-secondary">
+                                    Hủy bỏ
+                                </a>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fa-solid fa-floppy-disk me-1"></i>
+                                    <span th:text="${isEdit ? 'Cập nhật' : 'Lưu lại'}"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

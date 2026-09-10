@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <header th:fragment="header" class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" th:href="@{/admin/categories}">
+                <i class="fa-solid fa-layer-group text-warning me-2 fs-4"></i>
+                <span>ADMIN - CATEGORY</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="adminNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin/categories/searchpaginated}">
+                            <i class="fa-solid fa-list-check me-1"></i> Quản lý danh mục
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/admin/categories/add}">
+                            <i class="fa-solid fa-circle-plus me-1"></i> Thêm mới
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- HÌNH ẢNH CỦA SINH VIÊN VÀ TÊN ADMIN -->
+                <div class="d-flex align-items-center">
+                    <!-- Bạn có thể đặt file ảnh tại: src/main/resources/static/images/avatar.jpg -->
+                    <img th:src="@{/static/images/avatar.jpg}"
+                        src="https://ui-avatars.com/api/?name=Le+Quoc+Cuong&background=0D8ABC&color=fff&size=128"
+                        alt="Avatar Sinh Viên" class="student-avatar me-2"
+                        onerror="this.src='https://ui-avatars.com/api/?name=Le+Quoc+Cuong&background=0D8ABC&color=fff&size=128'">
+                    <div class="text-white lh-sm">
+                        <div class="fw-bold small">Lê Quốc Cường</div>
+                        <span class="badge bg-warning text-dark" style="font-size: 0.65rem;">ADMINISTRATOR</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</body>
+
+</html>
